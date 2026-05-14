@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITTA | Dashboard</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="menu-title">
+            <a href="dashboard.html" class="title-link">SITTA</a>
+        </div>
+        <nav class="main-nav">
+            <a href="stok.html" class="nav-link"><i class="fa-solid fa-book"></i> Informasi Bahan Ajar</a>
+            <a href="tracking.html" class="nav-link"><i class="fa-solid fa-truck-fast"></i> Tracking Pengiriman</a>
+            <div class="submenu">
+                <button class="nav-link submenu-toggle"><i class="fa-solid fa-chart-column"></i> Laporan<i
+                        class="fa-solid fa-caret-down"></i></button>
+                <div class="submenu-content">
+                    <a href="#" class="submenu-item">Monitoring Progress DO Bahan Ajar</a>
+                    <a href="#" class="submenu-item">Rekap Bahan Ajar</a>
+                </div>
+            </div>
+            <a href="#" class="nav-link"><i class="fa-solid fa-file-contract"></i> Histori Transaksi Bahan Ajar</a>
+            <a href="#" class="nav-link" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </nav>
+    </header>
+
+    <div class="title-card">
+        <h2>Dashboard</h2>
+        <div class="subtitle" id="greeting"></div>
+    </div>
+
+    <div class="main-card dashboard-container">
+
+        <div class="dashboard-title">
+            <h1>SITTA UT</h1>
+            <p>Sistem Informasi Tiras dan Transaksi Bahan Ajar</p>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-window" id="menuInformasiBahanAjar">
+                <i class="fa-solid fa-book"></i>
+                <span class="menu-link">
+                    Informasi Bahan Ajar
+                </span>
+            </div>
+            <div class="menu-window" id="menuTrackingPengiriman">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span class="menu-link">
+                    Tracking Pengiriman
+                </span>
+            </div>
+            <div class="menu-window" id="menuLaporan">
+                <i class="fa-solid fa-chart-column"></i>
+                <span class="menu-link">
+                    Laporan
+                </span>
+            </div>
+            <div class="menu-window" id="menuHistoryTransaksiBahanAjar">
+                <i class="fa-solid fa-file-contract"></i>
+                <span class="menu-link">
+                    History Transasksi Bahan Ajar
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/headerNav.js"></script>
+    <script type="module" src="js/dashboardPage.js"></script>
+</body>
+
+</html>

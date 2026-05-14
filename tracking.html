@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITTA | Tracking</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="menu-title">
+            <a href="dashboard.html" class="title-link">SITTA</a>
+        </div>
+        <nav class="main-nav">
+            <a href="stok.html" class="nav-link"><i class="fa-solid fa-book"></i> Informasi Bahan Ajar</a>
+            <a href="tracking.html" class="nav-link"><i class="fa-solid fa-truck-fast"></i> Tracking Pengiriman</a>
+            <div class="submenu">
+                <button class="nav-link submenu-toggle"><i class="fa-solid fa-chart-column"></i> Laporan<i
+                        class="fa-solid fa-caret-down"></i></button>
+                <div class="submenu-content">
+                    <a href="#" class="submenu-item">Monitoring Progress DO Bahan Ajar</a>
+                    <a href="#" class="submenu-item">Rekap Bahan Ajar</a>
+                </div>
+            </div>
+            <a href="#" class="nav-link"><i class="fa-solid fa-file-contract"></i> Histori Transaksi Bahan Ajar</a>
+            <a href="#" class="nav-link" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </nav>
+    </header>
+
+    <div id="trackingApp">
+
+        <div class="title-card title-button">
+            <div>
+                <h3>
+                    {{ addTrackingDataView ? 'Tambah Pengiriman' : 'Tracking Pengiriman' }}
+                </h3>
+                <div class="subtitle">Sistem Informasi Tiras dan Transaksi Bahan Ajar</div>
+            </div>
+
+            <button class="btn btn-secondary" @click="toggleView">
+                {{ addTrackingDataView ? 'Lacak Delivery Order' : 'Tambah Delivery Order'}}
+            </button>
+        </div>
+
+        <div class="main-card">
+            <div class="add-tracking-container" late v-if="addTrackingDataView">
+                <div class="input-do-container">
+                    <h4>Tambah Tracking Delivery Order</h4>
+                    <form @submit.prevent="addDeliveryOrder" id="addDoForm">
+                        <div class="scrollable-form">
+                            <div class="input-group">
+                                <label>Nomor DO</label>
+                                <input type="text" :value="counterNomorDeliveryOrder" disabled>
+                            </div>
+
+                            <div class="input-group">
+                                <label>NIM</label>
+                                <input type="text" v-model="deliveryOrder.nim">
+                            </div>
+
+                            <div class="input-group">
+                                <label>Nama</label>
+                                <input type="text" v-model="deliveryOrder.nama">
+                            </div>
+
+                            <div class="input-group">
+                                <label>Ekspedisi</label>
+                                <select v-model="deliveryOrder.ekspedisi">
+                                    <option disabled value="">Pilih Ekspedisi</option>
+                                    <option v-for="(pengiriman, index) in pengirimanList" :key="index"
+                                        :value="pengiriman.kode">
+                                        {{ pengiriman.nama }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Paket Bahan Ajar</label>
+                                <select v-model="deliveryOrder.paket">
+                                    <option disabled value="">Pilih Paket</option>
+                                    <option v-for="(paket, index) in paketList" :key="index" :value="paket.kode">
+                                        {{ paket.kode }} - {{ paket.nama }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Tanggal Kirim:</label>
+                                <input type="date" v-model="deliveryOrder.tanggalKirim" />
+                            </div>
+                        </div>
+
+                        <div v-if="selectedPaket || selectedPengiriman" class="package-detail">
+                            <h4>Detail Paket</h4>
+                            <template v-if="selectedPengiriman">
+                                <p>Ekspedisi: <b>{{ ekspedisiFormatted }}</b></p>
+                            </template>
+                            <template v-if="selectedPaket">
+                                <p>Bahan Ajar:</p>
+                                <ol>
+                                    <li v-for="(item, index) in selectedPaket.isi" :key="index"><b>{{ item }}</b></li>
+                                </ol>
+                                <p id="totalHarga">Total Harga: <b>Rp{{ selectedPaket.harga.toLocaleString('id-ID') }}</b></p>
+                            </template>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-large">Tambah</button>
+                    </form>
+                </div>
+
+                <div class="list-do-table">
+                    <h3>Daftar Delivery Order</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nomor DO</th>
+                                <th>NIM</th>
+                                <th>Nama</th>
+                                <th>Ekspedisi</th>
+                                <th>Paket</th>
+                                <th>Tanggal Kirim</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, key) in trackingList" :key="key">
+                                <td class="text-left">{{key}}</td>
+                                <td>{{item.nim}}</td>
+                                <td>{{item.nama}}</td>
+                                <td>{{item.ekspedisi}}</td>
+                                <td>{{item.paket}}</td>
+                                <td>{{item.tanggalKirim}}</td>
+                                <td>Rp{{item.total.toLocaleString('id-ID')}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tracking-container" v-else>
+                <div class="tracking-title">
+                    <h3>Pantau Pengiriman Bahan Ajar</h3>
+                    <p>Masukkan Nomor Delivery Order. Contoh: 2026012345.</p>
+                </div>
+
+                <div class="tracking-input">
+                    <input type="text" id="trackingNumber" placeholder="Nomor Delivery Order">
+                    <button class="btn btn-primary" id="btnTracking">
+                        <i class="fa-solid fa-magnifying-glass"></i>Lacak
+                    </button>
+                </div>
+                <div class="tracking-result">
+                    <div class="tracking-card">
+                        <div class="tracking-card-header">
+                            <h2>Detail Pengiriman</h2>
+                            <span class="status-badge" id="ui-status"></span>
+                        </div>
+
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">No. DO</span>
+                                <span class="info-value" id="ui-nomorDO"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Penerima</span>
+                                <span class="info-value" id="ui-nama"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Ekspedisi</span>
+                                <span class="info-value" id="ui-ekspedisi"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Tanggal Kirim</span>
+                                <span class="info-value" id="ui-tanggal"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Paket</span>
+                                <span class="info-value" id="ui-paket"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Total</span>
+                                <span class="info-value" id="ui-total"></span>
+                            </div>
+                        </div>
+
+                        <div class="timeline-container">
+                            <h3 class="timeline-title">Riwayat Perjalanan</h3>
+                            <ul class="timeline" id="ui-timeline"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.22/vue.global.prod.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/headerNav.js"></script>
+    <script type="module" src="js/tracking-app.js"></script>
+    <script type="module" src="js/trackingFind.js"></script>
+</body>
+
+</html>

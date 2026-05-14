@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITTA | Informasi Bahan Ajar</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</head>
+
+<body>
+    <nav class="main-header">
+        <div class="menu-title">
+            <a href="dashboard.html" class="title-link">SITTA</a>
+        </div>
+        <nav class="main-nav">
+            <a href="stok.html" class="nav-link"><i class="fa-solid fa-book"></i> Informasi Bahan Ajar</a>
+            <a href="tracking.html" class="nav-link"><i class="fa-solid fa-truck-fast"></i> Tracking Pengiriman</a>
+            <div class="submenu">
+                <button class="nav-link submenu-toggle"><i class="fa-solid fa-chart-column"></i> Laporan<i
+                        class="fa-solid fa-caret-down"></i></button>
+                <div class="submenu-content">
+                    <a href="#" class="submenu-item">Monitoring Progress DO Bahan Ajar</a>
+                    <a href="#" class="submenu-item">Rekap Bahan Ajar</a>
+                </div>
+            </div>
+            <a href="#" class="nav-link"><i class="fa-solid fa-file-contract"></i> Histori Transaksi Bahan Ajar</a>
+            <a href="#" class="nav-link" id="btnLogout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </nav>
+    </nav>
+
+    <div id="stockApp">
+
+        <div class="title-card">
+            <h2>Informasi Bahan Ajar</h2>
+            <div class="subtitle">Sistem Informasi Tiras dan Transaksi Bahan Ajar</div>
+        </div>
+
+        <div class="main-card">
+            <div class="stok-container">
+                <div class="table-container">
+
+                    <div class="table-title">
+                        <h2>Data Stok Bahan Ajar</h2>
+                        <button class="btn btn-primary" @click="addStock">
+                            <i class="fa-solid fa-plus"></i> Bahan Ajar
+                        </button>
+                    </div>
+
+                    <div class="filter-container">
+                        <div class="left-filter">
+                            <div class="filter-group">
+                                <label for="filterUpbjj">UPBJJ</label>
+                                <select v-model="selectedUpbjj" id="filterUpbjj">
+                                    <option value="">Semua UPBJJ</option>
+                                    <option v-for="(upbjj, index) in upbjjList" :key="index" :value="upbjj">{{ upbjj }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group" v-show="selectedUpbjj && filteredStok.length > 0">
+                                <label for="filterKategori">Kategori</label>
+                                <select v-model="selectedKategori" id="filterKategori">
+                                    <option value="">Semua Kategori</option>
+                                    <option v-for="(kategori, index) in filteredKategoriList" :key="index"
+                                        :value="kategori">{{ kategori }}</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group" v-show="filteredStok.length > 0">
+                                <label for="sortBy">Urutkan</label>
+                                <select v-model="sortBy" id="sortBy">
+                                    <option value="">Default</option>
+                                    <option v-for="{key, value} in sortList" :key="key" :value="key">{{ value }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group" v-show="filteredStok.length > 0">
+                                <input type="checkbox" v-model="isSafetyStock">
+                                <span>Hanya Stok Menipis</span>
+                            </div>
+                        </div>
+
+                        <div class="right-filter" v-if="selectedUpbjj || selectedKategori || sortBy || isSafetyStock">
+                            <a @click="resetFilters"><i class="fa-solid fa-rotate-left"></i>Reset</a>
+                        </div>
+
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th>Judul</th>
+                                <th>Kategori</th>
+                                <th>UPBJJ</th>
+                                <th>Lokasi Rak</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th class="th-center">Status</th>
+                                <th>Catatan</th>
+                                <th class="th-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="item in filteredStok" :key="item.kode">
+                                <td>{{ item.kode }}</td>
+                                <td>{{ item.judul }}</td>
+                                <td>{{ item.kategori }}</td>
+                                <td>{{ item.upbjj }}</td>
+                                <td>{{ item.lokasiRak }}</td>
+                                <td>Rp{{ item.harga.toLocaleString('id-ID') }}</td>
+                                <td>{{ item.qty }}</td>
+                                <td class="td-center">
+                                    <span :class="'badge badge-' + safetyClass(item)">
+                                        {{ safetyStatus(item) }}
+                                    </span>
+                                </td>
+                                <td v-html="item.catatanHTML"></td>
+                                <td class="td-center">
+                                    <button class="btn btn-sm btn-warning" @click="editStock(item)"
+                                        style="margin-right: 5px;"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button class="btn btn-sm btn-danger" @click="deleteStock(item)"><i
+                                            class="fa-solid fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr v-if="filteredStok.length === 0">
+                                <td colspan="10" style="text-align: center;">Tidak ada data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.5.22/vue.global.prod.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="data/dataBahanAjar.js"></script>
+    <script type="module" src="js/stock-app.js"></script>
+    <script type="module" src="js/headerNav.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="container login">
+
+        <div class="card card-login">
+
+            <div class="login-logo-container">
+                <img src="assets/logo-ut.png" alt="Logo" class="login-logo">
+            </div>
+
+            <h2 class="login-title">SITTA</h2>
+
+            <form action="#" id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" placeholder="email@ut.ac.id" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" placeholder="******" required>
+                </div>
+
+                <div class="text-right">
+                    <a href="#" id="btnLupaPassword">Lupa Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">Login</button>
+            </form>
+
+            <div class="text-center">
+                <span>Belum punya akun? <a href="#" id="btnDaftar">Daftar</a></span>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/loginPage.js"></script>
+</body>
+
+</html>
